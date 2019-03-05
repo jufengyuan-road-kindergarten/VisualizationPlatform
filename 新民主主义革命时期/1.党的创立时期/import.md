@@ -32,7 +32,7 @@ unwind split(linemc,",") as mc
 with split(mc,":") as arr, mc, line.name as eventTitle
 with case size(arr) when 2 then toInt(arr[1]) else 5 end as priority,arr[0] as personName,eventTitle
 match (p:Person{name:personName}), (e:Event{name:eventTitle})
-create (p)-[:PARTICIPATE{priority:priority}]->(e)
+merge (p)-[:RELATION{type:'参与',priority:priority}]->(e)
 ```
 
 # meeting.csv
@@ -69,7 +69,38 @@ unwind split(linemc,",") as mc
 with split(mc,":") as arr, mc, line.name as eventTitle
 with case size(arr) when 2 then toInt(arr[1]) else 5 end as priority,arr[0] as personName,eventTitle
 match (p:Person{name:personName}), (e:Meeting{name:eventTitle})
-create (p)-[:PARTICIPATE{priority:priority}]->(e)
+merge (p)-[:RELATION{type:'参与',priority:priority}]->(e)
 ```
 
-# 
+#event_event.csv
+
+```cypher
+LOAD CSV WITH HEADERS FROM "file:///event_event.csv" AS line
+match (e1:Event{name:line.Event}),(e2:Event{name:line.Event2})
+merge (e1)-[:RELATION{type:line.relation}]->(e2)
+```
+
+# meeting_meeting.csv
+
+```cypher
+LOAD CSV WITH HEADERS FROM "file:///meeting_meeting.csv" AS line
+match (e1:Meeting{name:line.Meeting}),(e2:Meeting{name:line.Meeting2})
+merge (e1)-[:RELATION{type:line.relation}]->(e2)
+```
+
+# event_meeting.csv
+
+```cypher
+LOAD CSV WITH HEADERS FROM "file:///event_meeting.csv" AS line
+match (e1:Event{name:line.Event}),(e2:Meeting{name:line.Meeting})
+merge (e1)-[:RELATION{type:line.relation}]->(e2)
+```
+
+# movement_event.csv
+
+```cypher
+LOAD CSV WITH HEADERS FROM "file:///movement_event.csv" AS line
+match (e1:Movement{name:line.Movement}),(e2:Meeting{name:line.Event})
+merge (e1)-[:RELATION{type:line.relation}]->(e2)
+```
+

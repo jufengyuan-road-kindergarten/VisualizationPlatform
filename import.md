@@ -1,6 +1,6 @@
 # character1.csv
 
-根据event.csv简易建立Person结点
+根据character1.csv简易建立Person结点
 
 ```cypher
 LOAD CSV WITH HEADERS FROM "file:///character1.csv" AS line
